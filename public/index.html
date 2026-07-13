@@ -1,1 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Turner Finance Futures Program</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-lockup" aria-label="Turner Finance Futures Program Home">
+      <div class="brand-mark" aria-hidden="true">
+        <img src="assets/turner-logo.webp" alt="">
+      </div>
+      <div>
+        <p class="eyebrow">College Case Study Portal</p>
+        <h1>Turner Finance Futures Program</h1>
+      </div>
+    </div>
+    <div class="status-pill" id="viewStatusPill">Student View</div>
+  </header>
 
+  <main class="page-shell">
+    <section id="studentView" class="view-panel">
+      <div class="hero-card student-hero-card">
+        <div>
+          <p class="eyebrow copper">Student Workspace</p>
+          <h2 id="caseTitleHeading">Turner Finance Futures Program</h2>
+          <p class="hero-copy">Download the case document, work through the checklist, ask the AI Boss for coaching, and submit your completed file with your resume.</p>
+        </div>
+        <div class="hero-metric">
+          <span id="studentProgressMetric">0%</span>
+          <small>Checklist Progress</small>
+        </div>
+      </div>
+
+      <div id="studentAlert" class="alert hidden" role="status"></div>
+
+      <section id="waitingPanel" class="empty-state hidden" aria-live="polite">
+        <div class="empty-icon">...</div>
+        <h3>Waiting For Host To Begin Case Study.</h3>
+        <p>The case document and checklist will appear here once the host publishes them.</p>
+      </section>
+
+      <section id="studentWorkspace" class="student-workspace hidden" aria-live="polite">
+        <aside class="card ai-card sticky-ai" aria-label="AI Boss Coaching Assistant">
+          <div class="card-heading">
+            <span class="step-badge">AI</span>
+            <div>
+              <h3>AI Boss</h3>
+              <p>Ask where to look, how to check reasoning, or how to debug. It will not complete the work.</p>
+            </div>
+          </div>
+          <div class="chat-window" id="chatWindow" aria-live="polite"></div>
+          <div class="prompt-chips" aria-label="Starter Prompts">
+            <button class="chip" type="button" data-prompt="Where should I start on the next checklist item?">Where Should I Start?</button>
+            <button class="chip" type="button" data-prompt="Can you explain the method without giving me the answer?">Explain The Method</button>
+            <button class="chip" type="button" data-prompt="My formula is not working. How should I debug it?">Debug My Formula</button>
+          </div>
+          <form id="aiForm" class="chat-form">
+            <label class="sr-only" for="aiInput">Ask The AI Boss A Coaching Question</label>
+            <textarea id="aiInput" rows="3" placeholder="Example: I am on checklist item 2 and found the assumptions tab. What should I verify next?"></textarea>
+            <button class="button primary" type="submit">Ask</button>
+          </form>
+        </aside>
+
+        <div class="student-main">
+          <article class="card document-card">
+            <div class="card-heading">
+              <span class="step-badge">1</span>
+              <div>
+                <h3>Case Study Document</h3>
+                <p>Open the workbook, review the instructions, and keep your completed version for submission.</p>
+              </div>
+            </div>
+            <div class="file-row">
+              <div>
+                <strong id="caseFileName">No File Published</strong>
+                <p id="caseFileMeta">Waiting For Host.</p>
+              </div>
+              <a class="button primary" id="downloadCaseButton" href="/api/case-file">Download</a>
+            </div>
+          </article>
+
+          <article class="card checklist-card">
+            <div class="card-heading">
+              <span class="step-badge">2</span>
+              <div>
+                <h3>Instruction Checklist</h3>
+                <p>Each instruction is separated into its own section. Check an item only when you have completed it in your workbook.</p>
+              </div>
+            </div>
+            <div class="progress-wrap" aria-label="Checklist Progress">
+              <div class="progress-topline">
+                <span id="progressLabel">0 Of 0 Complete</span>
+                <span id="progressPercent">0%</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+            </div>
+            <div id="checklistContainer" class="checklist"></div>
+          </article>
+
+          <article class="card submit-card">
+            <div class="card-heading">
+              <span class="step-badge">3</span>
+              <div>
+                <h3>Submit Completed Case Study</h3>
+                <p>Attach your completed case document and resume. The host will receive your submission, resume, AI Boss report, and candidate dashboard.</p>
+              </div>
+            </div>
+            <form id="submissionForm" class="stacked-form">
+              <div class="form-grid two-column-form">
+                <label>
+                  Student Name
+                  <input id="studentName" name="studentName" type="text" placeholder="Enter Your Full Name" autocomplete="name" required>
+                </label>
+                <label>
+                  Email Address
+                  <input id="studentEmail" name="studentEmail" type="email" placeholder="name@example.edu" autocomplete="email" required>
+                </label>
+                <label>
+                  College
+                  <input id="studentCollege" name="studentCollege" type="text" placeholder="Enter Your College" autocomplete="organization" required>
+                </label>
+                <label>
+                  Expected Graduation Date
+                  <input id="expectedGraduationDate" name="expectedGraduationDate" type="month" required>
+                </label>
+                <label>
+                  Major
+                  <input id="studentMajor" name="studentMajor" type="text" placeholder="Enter Your Major" required>
+                </label>
+              </div>
+
+              <div class="form-block resume-details-block">
+                <div>
+                  <h4>Resume Details For Host Dashboard</h4>
+                  <p class="form-help">These fields help the host dashboard stay accurate. The app also performs a best-effort resume scan after upload.</p>
+                </div>
+                <div class="form-grid two-column-form">
+                  <label>
+                    Number Of Internships On Resume
+                    <input id="resumeInternshipCount" name="resumeInternshipCount" type="number" min="0" step="1" placeholder="Example: 2">
+                  </label>
+                  <label>
+                    Years Of Experience On Resume
+                    <input id="resumeYearsExperience" name="resumeYearsExperience" type="number" min="0" step="0.1" placeholder="Example: 1.5">
+                  </label>
+                </div>
+                <label>
+                  Industry Experience Breakdown
+                  <textarea id="resumeIndustryBreakdown" name="resumeIndustryBreakdown" rows="3" placeholder="Example: Construction: 1 internship; Finance: 1 internship; Campus Leadership: 2 years"></textarea>
+                </label>
+              </div>
+
+              <label>
+                Completed Case Study Document
+                <input id="submissionFile" name="submissionFile" type="file" accept=".xlsx,.xls,.xlsm,.csv" required>
+              </label>
+              <label>
+                Resume
+                <input id="resumeFile" name="resumeFile" type="file" accept=".pdf,.doc,.docx,.txt,.rtf" required>
+              </label>
+              <button class="button copper-button" type="submit">Submit Case Study</button>
+            </form>
+            <div id="submissionResult" class="submission-result hidden"></div>
+          </article>
+        </div>
+      </section>
+    </section>
+
+    <section id="hostView" class="view-panel hidden">
+      <div class="host-topbar">
+        <div>
+          <p class="eyebrow copper">Host Control Center</p>
+          <h2>Publish The Case And Review Student Performance.</h2>
+        </div>
+        <div class="host-actions">
+          <button id="refreshHostButton" class="button ghost" type="button">Refresh</button>
+          <button id="studentViewButton" class="button secondary" type="button">Student View</button>
+        </div>
+      </div>
+
+      <div id="hostAlert" class="alert hidden" role="status"></div>
+
+      <div class="host-grid">
+        <article class="card">
+          <div class="card-heading">
+            <span class="step-badge">A</span>
+            <div>
+              <h3>Publish Case Study</h3>
+              <p>Upload the Excel case document, add a case-specific title, and build the instruction checklist one section at a time.</p>
+            </div>
+          </div>
+          <form id="publishForm" class="stacked-form">
+            <label>
+              Case Title
+              <input id="caseTitle" name="caseTitle" type="text" placeholder="Example: Turner Regional Forecasting Case" required>
+            </label>
+            <label>
+              Excel Case Document
+              <input id="caseFile" name="caseFile" type="file" accept=".xlsx,.xls,.xlsm,.csv" required>
+            </label>
+
+            <div class="form-block">
+              <div class="builder-heading">
+                <div>
+                  <h4>Instructions Checklist</h4>
+                  <p>Create one separate checklist section for each required task.</p>
+                </div>
+                <button id="addChecklistItemButton" class="button ghost small-button" type="button">Add Section</button>
+              </div>
+              <div id="checklistBuilder" class="checklist-builder"></div>
+            </div>
+
+            <label class="inline-check">
+              <input id="clearSubmissions" type="checkbox">
+              Clear Existing Submissions When Publishing This Case
+            </label>
+            <button class="button primary" type="submit">Publish Case Study</button>
+          </form>
+        </article>
+
+        <article class="card">
+          <div class="card-heading">
+            <span class="step-badge">B</span>
+            <div>
+              <h3>Current Case</h3>
+              <p>What students currently see in the default student view.</p>
+            </div>
+          </div>
+          <div id="hostCaseSummary" class="case-summary"></div>
+          <div class="danger-zone">
+            <h4>Reset Portal</h4>
+            <p>Deletes the published case, help questions, and all submissions stored by this app.</p>
+            <button id="resetPortalButton" class="button danger" type="button">Reset All Data</button>
+          </div>
+        </article>
+      </div>
+
+      <article class="card questions-card">
+        <div class="submissions-header">
+          <div>
+            <h3>Student Questions</h3>
+            <p>Answer student help requests and post replies back to the specific student's page.</p>
+          </div>
+          <button id="refreshQuestionsButton" class="button ghost" type="button">Refresh Questions</button>
+        </div>
+        <div id="hostQuestionsWrap" class="questions-wrap"></div>
+      </article>
+
+      <article class="card submissions-card">
+        <div class="submissions-header">
+          <div>
+            <h3>Student Submissions</h3>
+            <p>Click a student's name to open the candidate dashboard with college, graduation, major, email, resume insights, and AI Boss performance.</p>
+          </div>
+          <button id="exportCsvButton" class="button ghost" type="button">Export CSV</button>
+        </div>
+        <div id="submissionsTableWrap" class="table-wrap"></div>
+      </article>
+    </section>
+  </main>
+
+  <div class="bottom-actions" aria-label="Quick Links">
+    <button id="helpButton" class="bottom-action help-action" type="button">Help</button>
+    <a id="careersButton" class="bottom-action careers-action" href="https://www.turnerconstruction.com/careers" target="_blank" rel="noopener noreferrer">Careers</a>
+    <button id="hostViewButton" class="bottom-action host-fab" type="button">Host View</button>
+  </div>
+
+  <div id="hostLoginModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="hostLoginTitle">
+    <div class="modal-card">
+      <button id="closeLoginButton" class="modal-close" type="button" aria-label="Close Host Login">x</button>
+      <p class="eyebrow copper">Secure Area</p>
+      <h2 id="hostLoginTitle">Enter Host Password</h2>
+      <form id="hostLoginForm" class="stacked-form">
+        <label>
+          Password
+          <input id="hostPasswordInput" type="password" inputmode="numeric" autocomplete="current-password" required>
+        </label>
+        <button class="button primary" type="submit">Open Host View</button>
+      </form>
+      <p class="modal-note">This build enforces the requested password on the server. For production, replace it with school-approved authentication.</p>
+    </div>
+  </div>
+
+  <div id="studentHelpModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="studentHelpTitle">
+    <div class="modal-card wide-modal">
+      <button id="closeHelpButton" class="modal-close" type="button" aria-label="Close Help">x</button>
+      <p class="eyebrow copper">Student Help</p>
+      <h2 id="studentHelpTitle">Ask The Host A Question</h2>
+      <p class="modal-note">Use this for event or case logistics. For process coaching, use the AI Boss on the left side of the student workspace.</p>
+      <div id="helpModalAlert" class="alert hidden" role="status"></div>
+      <form id="helpQuestionForm" class="stacked-form help-question-form">
+        <div class="form-grid two-column-form">
+          <label>
+            Student Name
+            <input id="helpStudentName" type="text" placeholder="Enter Your Full Name" autocomplete="name" required>
+          </label>
+          <label>
+            Email Address
+            <input id="helpStudentEmail" type="email" placeholder="name@example.edu" autocomplete="email" required>
+          </label>
+        </div>
+        <label>
+          Question
+          <textarea id="helpQuestionText" rows="4" placeholder="Type your question for the host." required></textarea>
+        </label>
+        <button class="button primary" type="submit">Send Question</button>
+      </form>
+      <div class="help-history-block">
+        <div class="builder-heading">
+          <div>
+            <h3>My Questions And Host Answers</h3>
+            <p>Answers posted by the host will appear here for this student session.</p>
+          </div>
+          <button id="refreshStudentQuestionsButton" class="button ghost small-button" type="button">Refresh</button>
+        </div>
+        <div id="studentQuestionsWrap" class="questions-wrap"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="submissionDashboardModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="submissionDashboardTitle">
+    <div class="modal-card dashboard-modal-card">
+      <button id="closeDashboardButton" class="modal-close" type="button" aria-label="Close Submission Dashboard">x</button>
+      <div id="submissionDashboardContent"></div>
+    </div>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
